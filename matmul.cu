@@ -38,7 +38,7 @@ int main(){
     cudaMalloc(&d_B, size);
     cudaMalloc(&d_C, size);
 
-    //搬运内存
+    //从CPU到GPU搬运内存
     cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
 
