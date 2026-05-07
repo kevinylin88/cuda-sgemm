@@ -10,4 +10,5 @@ typedef struct matrix
 }matrix;
 
 void sgemm_cublas(matrix mat1, matrix mat2, matrix mat3);
+void sgemm_naive(matrix mat1, matrix mat2, matrix mat3);
 #endif
