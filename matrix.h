@@ -1,0 +1,13 @@
+#ifndef matrix_h
+#define matrix_h
+#include <stdio.h>
+#include <cstddef>
+typedef struct matrix
+{
+    size_t rows;
+    size_t cols;
+    float* data;
+}matrix;
+
+void sgemm_cublas(matrix mat1, matrix mat2, matrix mat3);
+#endif
