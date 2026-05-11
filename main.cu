@@ -36,7 +36,7 @@ void test_matmul(matrix mat1, matrix mat2, matrix mat3, const std::string func_t
         sort(result, result + MEASURE_TIME);
         float smaller = result[MEASURE_TIME / 2 - 1];
         float bigger = result[MEASURE_TIME / 2];
-        float median = (smaller + bigger) / 2;
+        float median = (smaller + bigger) / 2.0;
         float worst = result[MEASURE_TIME - 1];
         float best = result[0];
         cout << "matrix size: " << mat1.rows << " x " << mat1.cols << std::endl;
@@ -52,7 +52,7 @@ void test_matmul(matrix mat1, matrix mat2, matrix mat3, const std::string func_t
             //set mat3 to zero before each multiplication
             cudaMemset(mat3.data, 0, mat3.cols * mat3.rows * sizeof(float));
             cudaEventRecord(start);
-            sgemm_naive(mat1, mat2, mat3);
+            sgemm_v3_smem(mat1, mat2, mat3);
             cudaEventRecord(stop);
             cudaEventSynchronize(stop);
             cudaEventElapsedTime(&ms, start, stop);
@@ -62,7 +62,7 @@ void test_matmul(matrix mat1, matrix mat2, matrix mat3, const std::string func_t
         sort(result, result + MEASURE_TIME);
         float smaller = result[MEASURE_TIME / 2 - 1];
         float bigger = result[MEASURE_TIME / 2];
-        float median = (smaller + bigger) / 2;
+        float median = (smaller + bigger) / 2.0;
         float worst = result[MEASURE_TIME - 1];
         float best = result[0];
         cout << "matrix size: " << mat1.rows << " x " << mat1.cols << std::endl;
