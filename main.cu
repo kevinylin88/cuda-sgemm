@@ -75,7 +75,7 @@ void test_matmul(matrix mat1, matrix mat2, matrix mat3, const std::string func_t
 int main(int argc, char** argv) {
     matrix h_mat1, h_mat2, h_mat3;
     matrix d_mat1, d_mat2, d_mat3;
-    size_t test_set[] = {1, 2, 3, 4, 5};
+    size_t test_set[] = {64, 128, 256, 512, 8000};
     int len = sizeof(test_set) / sizeof(size_t);
 
     for(int i = 0; i < len; i++){
