@@ -76,6 +76,37 @@ void sgemm_v2_coalesced(matrix mat1, matrix mat2, matrix mat3){
     sgemm_v2_coalesced_gpu<<<grid, block>>>(mat1, mat2, mat3);
 }
 
+#define AR 32 // A's row
+#define AC 32 // A's col
+#define BR 32 // B's row
+#define BC 32 // B's col
+
+__global__ void sgemm_v3_smem(matrix mat1, matrix mat2, matrix mat3){
+    size_t row = blockDim.y * blockIdx.y + threadIdx.y;
+    size_t col = blockDim.x * blockIdx.x + threadIdx.x;
+
+    __shared__ float shmat1[AR][AC]; // stands for shared_matrix
+    __shared__ float shmat2[BR][BC];
+
+    int count = 0;
+    for(; count < (blockDim.y + count - 1) / count; count++){
+        // load shmat1
+        if(AC * count + AC < mat1.cols){
+            shmat1[threadIdx.y][threadIdx.x] = mat1.data[threadIdx.y * mat1.cols + count * AC + threadIdx.x];
+        }
+        else{
+            shmat1[threadIdx.y][threadIdx.x] = 0.0;
+        }
+        // load shmat2
+        if(BR * count + BR < mat2.rows){
+            shmat2[threadIdx.y][threadIdx.x] = mat2.data[(threadIdx.y + BR * count) * mat1.cols + threadIdx.x];
+        }
+        else{
+            shmat1[threadIdx.y][threadIdx.x] = 0.0;
+        }
+    }
+}
+
 void sgemm_cublas(matrix mat1, matrix mat2, matrix mat3){
     if(check_mat(mat1, mat2, mat3) == 1){return;}
     cublasHandle_t handle;
