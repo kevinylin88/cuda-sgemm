@@ -126,6 +126,45 @@ void sgemm_v3_smem(matrix mat1, matrix mat2, matrix mat3){
     sgemm_v3_smem_gpu<<<grid, block>>>(mat1, mat2, mat3);
 }
 
+#define MID_BLOCK 128
+#define SM_BLOCK 8
+
+__global__ void sgemm_v4_thread_tile_gpu(matrix mat1, matrix mat2, matrix mat3){
+    if(check_mat(mat1, mat2, mat3) == 1) return;
+    size_t row = blockDim.x * blockIdx.x + threadIdx.x;
+    size_t col = blockDim.y * blockIdx.y + threadIdx.y;
+
+    __shared__ float shmat1[MID_BLOCK][MID_BLOCK];
+    __shared__ float shmat2[MID_BLOCK][MID_BLOCK];
+
+    int count = 0;
+    for(; count < (mat1.cols + MID_BLOCK - 1) / MID_BLOCK; count++){
+        // load shmat1
+        if(TILE_SIZE * count + threadIdx.x < mat1.cols && row < mat1.rows){
+            shmat1[threadIdx.y][threadIdx.x] = mat1.data[row * mat1.cols + count * TILE_SIZE + threadIdx.x];
+        }
+        else{
+            shmat1[threadIdx.y][threadIdx.x] = 0.0;
+        }
+        // load shmat2
+        if(TILE_SIZE * count + threadIdx.y < mat2.rows && col < mat2.cols){
+            shmat2[threadIdx.y][threadIdx.x] = mat2.data[(threadIdx.y + TILE_SIZE * count) * mat2.cols + col];
+        }
+        else{
+            shmat2[threadIdx.y][threadIdx.x] = 0.0;
+        }
+        __syncthreads();
+        for(int k = 0; k < MID_BLOCK; k++){
+            for(int i = 0; i < SM_BLOCK; i++){
+                
+                for(int j = 0; j < SM_BLOCK; j++){
+
+                }
+            }
+        }
+    }
+}
+
 void sgemm_cublas(matrix mat1, matrix mat2, matrix mat3){
     if(check_mat(mat1, mat2, mat3) == 1){return;}
     cublasHandle_t handle;
