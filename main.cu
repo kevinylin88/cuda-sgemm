@@ -52,7 +52,7 @@ void test_matmul(matrix mat1, matrix mat2, matrix mat3, const std::string func_t
             //set mat3 to zero before each multiplication
             cudaMemset(mat3.data, 0, mat3.cols * mat3.rows * sizeof(float));
             cudaEventRecord(start);
-            sgemm_v3_smem(mat1, mat2, mat3);
+            sgemm_v4_register(mat1, mat2, mat3);
             cudaEventRecord(stop);
             cudaEventSynchronize(stop);
             cudaEventElapsedTime(&ms, start, stop);
